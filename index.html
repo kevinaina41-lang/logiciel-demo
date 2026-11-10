@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Essayez un logiciel de gestion — Gratuit</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  body{background:#f0f4f8;min-height:100vh;color:#1e293b;padding:12px;display:flex;justify-content:center;align-items:flex-start}
+  .app{width:100%;max-width:520px;background:#fff;border-radius:24px;box-shadow:0 10px 40px rgba(30,41,59,.08);overflow:hidden;margin:12px 0}
+  .screen{display:none;padding:26px 22px}
+  .screen.active{display:block;animation:slideUp .4s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  h1{font-size:1.6rem;text-align:center;margin-bottom:6px;color:#0f172a;font-weight:800;line-height:1.25}
+  h2{font-size:1.2rem;color:#0f172a;margin-bottom:10px;font-weight:700}
+  h3{font-size:.95rem;margin-bottom:10px;color:#0f172a;font-weight:700}
+  p{line-height:1.6;color:#475569;margin-bottom:10px;font-size:.9rem}
+  .sub{text-align:center;color:#64748b;margin-bottom:18px;font-size:.88rem;line-height:1.5}
+  .lead{text-align:center;color:#475569;font-size:.92rem;line-height:1.65}
+
+  .hero{text-align:center;font-size:3.4rem;margin:14px 0 6px;animation:float 3s ease-in-out infinite}
+  .hero-sub{display:inline-block;background:#eff6ff;color:#2563eb;padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:600;margin-bottom:16px}
+
+  .btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:10px;text-align:center;text-decoration:none;font-family:inherit;box-shadow:0 4px 14px rgba(59,130,246,.3)}
+  .btn:active{transform:scale(.98);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+  .btn.secondary{background:#f1f5f9;color:#475569;box-shadow:none;font-weight:600}
+  .btn.whatsapp{background:linear-gradient(135deg,#25d366,#128c7e);box-shadow:0 4px 14px rgba(37,211,102,.35);font-size:1.05rem;padding:18px}
+  .btn.small{padding:10px 14px;font-size:.82rem;width:auto;display:inline-block;margin:0;box-shadow:none}
+  .btn.danger{background:#fee2e2;color:#dc2626}
+  .btn.ghost{background:transparent;color:#64748b;box-shadow:none;font-weight:600;padding:12px}
+
+  .domains{display:flex;flex-direction:column;gap:11px;margin:18px 0}
+  .domain-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:16px;padding:15px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.2s}
+  .domain-card:active{border-color:#3b82f6;background:#f8fafc;transform:scale(.99)}
+  .domain-card .icon{font-size:1.9rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border-radius:12px;flex-shrink:0}
+  .domain-card .name{font-weight:700;font-size:.95rem;color:#0f172a}
+  .domain-card .desc{font-size:.76rem;color:#64748b;margin-top:2px;line-height:1.4}
+  .domain-card .arrow{margin-left:auto;color:#cbd5e1;font-size:1.1rem;flex-shrink:0}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:8px}
+  .badge{background:#eff6ff;color:#2563eb;padding:6px 13px;border-radius:20px;font-size:.75rem;font-weight:700;white-space:nowrap}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:13px;padding:11px 6px;text-align:center}
+  .stat .val{font-size:1.05rem;font-weight:800;color:#3b82f6;line-height:1.2}
+  .stat .lbl{font-size:.62rem;color:#64748b;margin-top:3px;line-height:1.2;font-weight:500}
+
+  .panel{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:15px;margin-bottom:12px}
+  input,select{width:100%;padding:12px;border-radius:11px;border:1.5px solid #e2e8f0;background:#fff;color:#1e293b;font-size:16px;margin-bottom:9px;font-family:inherit;transition:.15s}
+  input:focus,select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+  label{font-size:.76rem;color:#64748b;display:block;margin-bottom:4px;font-weight:600}
+
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th,td{padding:9px 6px;text-align:left;border-bottom:1px solid #e2e8f0}
+  th{color:#64748b;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.3px}
+  tr.low td{background:#fef2f2;color:#dc2626}
+  .tag{display:inline-block;padding:3px 9px;border-radius:9px;font-size:.68rem;font-weight:700}
+  .tag.ok{background:#dcfce7;color:#16a34a}
+  .tag.low{background:#fee2e2;color:#dc2626}
+
+  .alert{background:#fff7ed;border-left:3px solid #f97316;padding:11px 13px;border-radius:10px;margin-bottom:10px;font-size:.82rem;color:#9a3412;line-height:1.45;font-weight:500}
+  .explain{background:#eff6ff;border-left:3px solid #3b82f6;padding:13px 14px;border-radius:10px;margin-top:14px;font-size:.83rem;color:#1e40af;line-height:1.55;font-weight:500;animation:pop .3s ease}
+  .explain strong{color:#1d4ed8;font-weight:700}
+  .explain.hidden{display:none}
+
+  .empty{text-align:center;color:#94a3b8;padding:14px;font-size:.82rem}
+  .back{text-align:center;margin-top:14px}
+  .back a{color:#64748b;cursor:pointer;text-decoration:none;font-size:.82rem;font-weight:600}
+  .back a:active{color:#3b82f6}
+
+  .planning{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .planning table{min-width:460px}
+  .planning td.cell{text-align:center;border-radius:6px;font-size:.7rem;padding:8px 3px;font-weight:600}
+  .planning td.free{background:#dcfce7;color:#16a34a}
+  .planning td.taken{background:#dbeafe;color:#2563eb}
+
+  .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .prod-btn{background:#fff;border:1.5px solid #e2e8f0;border-radius:13px;padding:14px 8px;text-align:center;cursor:pointer;transition:.15s}
+  .prod-btn:active{border-color:#3b82f6;background:#eff6ff;transform:scale(.97)}
+  .prod-btn .pn{font-weight:700;font-size:.85rem;color:#0f172a}
+  .prod-btn .pp{color:#3b82f6;font-size:.76rem;margin-top:3px;font-weight:600}
+
+  .cart-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:.83rem;gap:8px;color:#475569}
+  .cart-total{display:flex;justify-content:space-between;font-weight:800;padding-top:11px;color:#3b82f6;font-size:.95rem}
+
+  .upsell{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:16px;padding:18px;margin-top:16px;border:1.5px solid #c7d2fe}
+  .upsell h3{color:#4338ca;font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .upsell ul{margin-left:18px;margin-bottom:10px}
+  .upsell li{font-size:.83rem;color:#3730a3;line-height:1.65;margin-bottom:5px}
+  .upsell li strong{color:#312e81}
+  .upsell .note{font-size:.82rem;color:#4338ca;font-weight:600;margin:0}
+
+  .final-box{background:#f0fdf4;border-radius:16px;padding:16px;margin-top:14px;border:1.5px solid #bbf7d0}
+  .final-box h3{color:#16a34a;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .final-box p{color:#166534;margin:0;font-size:.85rem;font-weight:500}
+
+  .trust{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.75rem;color:#64748b;margin-top:14px;font-weight:500}
+  .trust .dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+
+  @media(min-width:600px){
+    .app{max-width:600px;border-radius:28px}
+    .screen{padding:34px 30px}
+    h1{font-size:1.9rem}
+    .domains{flex-direction:row;flex-wrap:wrap}
+    .domain-card{flex:1 1 calc(50% - 6px);flex-direction:column;text-align:center;gap:8px;padding:22px 14px}
+    .domain-card .arrow{display:none}
+    .prod-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ ACCUEIL ============ -->
+<div class="screen active" id="s-welcome">
+  <div class="hero">🧪</div>
+  <div style="text-align:center"><span class="hero-sub">100% gratuit · sans inscription</span></div>
+  <h1>Testez un logiciel de gestion, comme si vous l'utilisiez vraiment</h1>
+  <p class="lead">Choisissez votre activité. Vous allez manipuler une <strong>vraie simulation</strong> : ajouter des produits, réserver des chambres, saisir des notes, encaisser des ventes. À chaque action, on vous explique ce que le logiciel fait pour vous.</p>
+  <p style="text-align:center;font-size:.82rem;color:#94a3b8;margin-top:14px;line-height:1.5">💡 Ceci n'est qu'un <strong>aperçu simple</strong>. Un vrai logiciel peut aller bien plus loin : automatiser, intégrer l'IA, connecter WhatsApp…</p>
+  <button class="btn" onclick="go('s-domain')">Commencer l'essai →</button>
+  <div class="trust"><span class="dot"></span> Aucune carte bancaire · Aucun engagement</div>
+</div>
+
+<!-- ============ CHOIX DOMAINE ============ -->
+<div class="screen" id="s-domain">
+  <h2>Quel est votre domaine ?</h2>
+  <p class="sub">Chaque essai est une simulation réelle, adaptée à votre activité</p>
+  <div class="domains">
+    <div class="domain-card" onclick="startDomain('stock')"><div class="icon">📦</div><div><div class="name">Gestion de Stock</div><div class="desc">Produits, entrées, sorties, alertes</div></div><div class="arrow">›</div></div>
+    <div class="domain-card" onclick="startDomain('hotel')"><div class="icon">🏨</div><div><div class="name">Gestion Hôtelière</div><div class="desc">Chambres, réservations, planning</div></div><div class="arrow">›</div></div>
+    <div class="domain-card" onclick="startDomain('ecole')"><div class="icon">🎓</div><div><div class="name">Gestion Scolaire</div><div class="desc">Élèves, notes, moyennes</div></div><div class="arrow">›</div></div>
+    <div class="domain-card" onclick="startDomain('commerce')"><div class="icon">🛒</div><div><div class="name">Point de Vente</div><div class="desc">Caisse, panier, chiffre d'affaires</div></div><div class="arrow">›</div></div>
+  </div>
+  <div class="back"><a onclick="go('s-welcome')">← Retour</a></div>
+</div>
+
+<!-- ============ SIMULATION ============ -->
+<div class="screen" id="s-sim">
+  <div class="topbar">
+    <span class="badge" id="simBadge">Domaine</span>
+    <button class="btn small secondary" onclick="go('s-domain')">← Changer</button>
+  </div>
+  <div class="stats" id="simStats"></div>
+  <div id="simBody"></div>
+  <div class="explain hidden" id="simExplain"></div>
+  <button class="btn" onclick="showBilan()" style="margin-top:14px">Voir mon bilan →</button>
+</div>
+
+<!-- ============ BILAN ============ -->
+<div class="screen" id="s-bilan">
+  <h2>Bravo, vous avez testé le logiciel ! 🎉</h2>
+  <p class="sub">Voici tout ce qu'il a enregistré pendant votre essai</p>
+  <div id="bilanContent"></div>
+
+  <div class="final-box">
+    <h3>✅ Ce que vous venez de vivre</h3>
+    <p id="bilanMsg"></p>
+  </div>
+
+  <div class="upsell">
+    <h3>🚀 Et ce n'est qu'un aperçu simple…</h3>
+    <p style="font-size:.85rem;margin-bottom:8px;color:#3730a3">Un logiciel sur mesure peut aller beaucoup plus loin :</p>
+    <ul>
+      <li>⚡ <strong>Automatiser</strong> : alertes WhatsApp, rapports quotidiens, relances clients</li>
+      <li>🤖 <strong>Intégrer l'IA</strong> : prévoir les ruptures, générer les bulletins, répondre aux clients</li>
+      <li>📱 <strong>Connecter</strong> : WhatsApp, paiement mobile, site web, réseaux sociaux</li>
+      <li>📊 <strong>Analyser</strong> : tableaux de bord, prévisions, décisions basées sur les données</li>
+    </ul>
+    <p class="note">Un logiciel pensé pour VOTRE activité, c'est possible.</p>
+  </div>
+
+  <p style="text-align:center;margin-top:20px;font-size:.9rem;color:#475569;font-weight:600">Discutons de votre projet en message privé 👇</p>
+  <a class="btn whatsapp" id="waBtn" href="#" target="_blank" rel="noopener">💬 Discuter sur WhatsApp</a>
+  <button class="btn ghost" onclick="go('s-domain')" style="margin-top:6px">Tester un autre domaine</button>
+  <div class="trust"><span class="dot"></span> Réponse rapide · Sans engagement</div>
+</div>
+
+</div>
+
+<script>
+/* ===== CONFIGURATION WHATSAPP ===== */
+const WHATSAPP_NUMBER = "261329280234"; // 0329280234 au format international Madagascar
+
+/* ===== ÉTAT ===== */
+let domain=null, bilan=[], stats={};
+
+/* ===== NAVIGATION ===== */
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+
+/* ===== EXPLICATION ===== */
+function explain(html){const e=document.getElementById('simExplain');e.innerHTML='💡 '+html;e.classList.remove('hidden');}
+
+/* ===== DÉMARRAGE ===== */
+function startDomain(d){
+  domain=d;bilan=[];stats={};
+  document.getElementById('simBadge').textContent={stock:'📦 Stock',hotel:'🏨 Hôtel',ecole:'🎓 École',commerce:'🛒 Commerce'}[d];
+  document.getElementById('simExplain').classList.add('hidden');
+  if(d==='stock')initStock();
+  if(d==='hotel')initHotel();
+  if(d==='ecole')initEcole();
+  if(d==='commerce')initCommerce();
+  go('s-sim');
+}
+
+/* ============================================================
+   STOCK
+   ============================================================ */
+let stockProducts=[];
+function initStock(){
+  stockProducts=[
+    {id:1,name:'Riz 25kg',qty:40,seuil:10,price:25000},
+    {id:2,name:'Huile 1L',qty:8,seuil:15,price:5000},
+    {id:3,name:'Sucre 1kg',qty:60,seuil:20,price:3000}
+  ];
+  stats={entrees:0,sorties:0};
+  renderStock();
+}
+function renderStock(){
+  const totalVal=stockProducts.reduce((s,p)=>s+p.qty*p.price,0);
+  const alerts=stockProducts.filter(p=>p.qty<p.seuil).length;
+  document.getElementById('simStats').innerHTML=`
+    <div class="stat"><div class="val">${stockProducts.length}</div><div class="lbl">Produits</div></div>
+    <div class="stat"><div class="val">${(totalVal/1000).toFixed(0)}k</div><div class="lbl">Valeur (Ar)</div></div>
+    <div class="stat"><div class="val" style="color:${alerts?'#dc2626':'#3b82f6'}">${alerts}</div><div class="lbl">Alertes</div></div>`;
+
+  let alertHtml='';
+  stockProducts.filter(p=>p.qty<p.seuil).forEach(p=>{
+    alertHtml+=`<div class="alert">⚠️ ${p.name} : stock bas (${p.qty} restants, seuil ${p.seuil}). Pensez à réapprovisionner.</div>`;
+  });
+
+  let rows=stockProducts.map(p=>`
+    <tr class="${p.qty<p.seuil?'low':''}">
+      <td>${p.name}</td><td>${p.qty}</td><td>${p.seuil}</td>
+      <td>${p.qty<p.seuil?'<span class="tag low">Bas</span>':'<span class="tag ok">OK</span>'}</td>
+    </tr>`).join('');
+
+  document.getElementById('simBody').innerHTML=`
+    ${alertHtml}
+    <div class="panel">
+      <h3>📋 Tableau de stock</h3>
+      <table><thead><tr><th>Produit</th><th>Qté</th><th>Seuil</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>
+    </div>
+    <div class="panel">
+      <h3>➕ Ajouter un produit</h3>
+      <label>Nom</label><input id="spName" placeholder="Ex: Farine 1kg">
+      <label>Quantité initiale</label><input id="spQty" type="number" value="10">
+      <label>Seuil d'alerte</label><input id="spSeuil" type="number" value="5">
+      <button class="btn small" onclick="addStockProduct()">Ajouter</button>
+    </div>
+    <div class="panel">
+      <h3>🔄 Mouvement de stock</h3>
+      <label>Produit</label><select id="spMoveProd">${stockProducts.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select>
+      <label>Quantité</label><input id="spMoveQty" type="number" value="5">
+      <button class="btn small" onclick="stockMove('in')">📥 Entrée</button>
+      <button class="btn small danger" onclick="stockMove('out')" style="margin-left:6px">📤 Sortie</button>
+    </div>`;
+}
+function addStockProduct(){
+  const name=document.getElementById('spName').value.trim();
+  const qty=parseInt(document.getElementById('spQty').value)||0;
+  const seuil=parseInt(document.getElementById('spSeuil').value)||0;
+  if(!name){explain('Le nom est obligatoire. Un vrai logiciel refuse un produit sans nom.');return;}
+  stockProducts.push({id:Date.now(),name,qty,seuil,price:2000});
+  bilan.push(`Ajout du produit « ${name} » (${qty} unités)`);
+  explain(`<strong>« ${name} » est ajouté.</strong> Un vrai logiciel enregistre le produit une seule fois : toutes les entrées et sorties futures y seront liées. Fini les cahiers où le même produit est écrit 3 fois différemment.`);
+  renderStock();
+}
+function stockMove(type){
+  const id=parseInt(document.getElementById('spMoveProd').value);
+  const qty=parseInt(document.getElementById('spMoveQty').value)||0;
+  const p=stockProducts.find(x=>x.id===id);
+  if(!p||qty<=0){explain('Quantité invalide. Un vrai logiciel refuse un mouvement à 0 ou négatif.');return;}
+  if(type==='in'){
+    p.qty+=qty;
+    bilan.push(`Entrée de ${qty} × ${p.name}`);
+    explain(`<strong>Entrée enregistrée : +${qty} ${p.name}.</strong> Le logiciel garde l'historique : vous saurez toujours qui a reçu quoi et quand.`);
+  }else{
+    if(qty>p.qty){explain(`<strong>Impossible : il ne reste que ${p.qty} unités de ${p.name}.</strong> Un vrai logiciel bloque cette erreur pour éviter un stock négatif.`);return;}
+    p.qty-=qty;
+    bilan.push(`Sortie de ${qty} × ${p.name}`);
+    explain(`<strong>Sortie enregistrée : -${qty} ${p.name}.</strong> Chaque sortie est tracée. C'est la base d'un inventaire fiable.`);
+  }
+  renderStock();
+}
+
+/* ============================================================
+   HÔTEL
+   ============================================================ */
+let hotelRooms=[], hotelResa=[];
+function initHotel(){
+  hotelRooms=[101,102,103,104,105];
+  hotelResa=[{room:101,start:0,end:2,client:'M. Rakoto'},{room:102,start:2,end:4,client:'Mme Dina'}];
+  stats={};
+  renderHotel();
+}
+function dayLabels(){return['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];}
+function renderHotel(){
+  const days=dayLabels();
+  const tonight=2;
+  const freeTonight=hotelRooms.filter(r=>!hotelResa.some(x=>x.room===r&&tonight>=x.start&&tonight<x.end)).length;
+  const occ=Math.round((1-freeTonight/hotelRooms.length)*100);
+  document.getElementById('simStats').innerHTML=`
+    <div class="stat"><div class="val">${freeTonight}</div><div class="lbl">Libres ce soir</div></div>
+    <div class="stat"><div class="val">${occ}%</div><div class="lbl">Occupation</div></div>
+    <div class="stat"><div class="val">${hotelResa.length}</div><div class="lbl">Résas</div></div>`;
+
+  let head=`<tr><th>Ch.</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr>`;
+  let body=hotelRooms.map(r=>{
+    let cells=days.map((d,i)=>{
+      const t=hotelResa.find(x=>x.room===r&&i>=x.start&&i<x.end);
+      return t?`<td class="cell taken">${t.client.split(' ')[0]}</td>`:`<td class="cell free">Libre</td>`;
+    }).join('');
+    return `<tr><td><strong>${r}</strong></td>${cells}</tr>`;
+  }).join('');
+
+  document.getElementById('simBody').innerHTML=`
+    <div class="panel planning">
+      <h3>🗓️ Planning (7 jours)</h3>
+      <table>${head}${body}</table>
+    </div>
+    <div class="panel">
+      <h3>➕ Nouvelle réservation</h3>
+      <label>Chambre</label><select id="hRoom">${hotelRooms.map(r=>`<option value="${r}">Chambre ${r}</option>`).join('')}</select>
+      <label>Client</label><input id="hClient" placeholder="Nom du client">
+      <label>Arrivée</label><select id="hStart">${days.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select>
+      <label>Départ</label><select id="hEnd">${days.map((d,i)=>`<option value="${i}" ${i===1?'selected':''}>${d}</option>`).join('')}</select>
+      <button class="btn small" onclick="addResa()">Réserver</button>
+    </div>
+    <div class="panel">
+      <h3>📋 Réservations</h3>
+      ${hotelResa.length?hotelResa.map((x,i)=>`<div class="cart-item"><span>Ch.${x.room} — ${x.client}</span><button class="btn small danger" onclick="cancelResa(${i})">✕</button></div>`).join(''):'<div class="empty">Aucune réservation</div>'}
+    </div>`;
+}
+function addResa(){
+  const room=parseInt(document.getElementById('hRoom').value);
+  const client=document.getElementById('hClient').value.trim();
+  const start=parseInt(document.getElementById('hStart').value);
+  const end=parseInt(document.getElementById('hEnd').value);
+  if(!client){explain('Le nom du client est obligatoire. Un vrai logiciel refuse une réservation sans client.');return;}
+  if(end<=start){explain('La date de départ doit être après l\'arrivée. Le logiciel bloque les réservations incohérentes.');return;}
+  if(hotelResa.some(x=>x.room===room&&start<x.end&&end>x.start)){
+    explain(`<strong>⛔ Refusé : la chambre ${room} est déjà occupée sur ces dates.</strong> Un vrai logiciel empêche la double réservation — la première source de conflits à l'accueil.`);
+    return;
+  }
+  hotelResa.push({room,start,end,client});
+  bilan.push(`Résa ch.${room} pour ${client} (${dayLabels()[start]}→${dayLabels()[end]})`);
+  explain(`<strong>Réservation confirmée.</strong> Elle est visible par toute l'équipe. Plus besoin de se demander si la chambre est libre : le planning fait foi.`);
+  renderHotel();
+}
+function cancelResa(i){
+  const x=hotelResa[i];
+  hotelResa.splice(i,1);
+  bilan.push(`Annulation ch.${x.room}`);
+  explain(`<strong>Annulation enregistrée.</strong> La chambre ${x.room} redevient immédiatement disponible. Un vrai logiciel met à jour toutes les vues en un clic.`);
+  renderHotel();
+}
+
+/* ============================================================
+   ÉCOLE
+   ============================================================ */
+let eleves=[];
+function initEcole(){
+  eleves=[
+    {id:1,name:'Andry',notes:[12,15]},
+    {id:2,name:'Soa',notes:[8,11]},
+    {id:3,name:'Miora',notes:[17,16]}
+  ];
+  renderEcole();
+}
+function moy(e){return e.notes.length?e.notes.reduce((a,b)=>a+b,0)/e.notes.length:0;}
+function appreciation(m){if(m<10)return'En difficulté';if(m<14)return'Passable';if(m<16)return'Bien';return'Très bien';}
+function renderEcole(){
+  const allNotes=eleves.flatMap(e=>e.notes);
+  const moyClasse=allNotes.length?allNotes.reduce((a,b)=>a+b,0)/allNotes.length:0;
+  document.getElementById('simStats').innerHTML=`
+    <div class="stat"><div class="val">${eleves.length}</div><div class="lbl">Élèves</div></div>
+    <div class="stat"><div class="val">${moyClasse.toFixed(1)}</div><div class="lbl">Moy. classe</div></div>
+    <div class="stat"><div class="val">${allNotes.length}</div><div class="lbl">Notes</div></div>`;
+
+  let rows=eleves.map(e=>{
+    const m=moy(e);
+    return `<tr><td>${e.name}</td><td><strong>${m.toFixed(1)}</strong></td><td>${appreciation(m)}</td></tr>`;
+  }).join('');
+
+  document.getElementById('simBody').innerHTML=`
+    <div class="panel">
+      <h3>📋 Élèves</h3>
+      <table><thead><tr><th>Élève</th><th>Moy.</th><th>Appréciation</th></tr></thead><tbody>${rows}</tbody></table>
+    </div>
+    <div class="panel">
+      <h3>➕ Ajouter un élève</h3>
+      <input id="ecName" placeholder="Nom de l'élève">
+      <button class="btn small" onclick="addEleve()">Ajouter</button>
+    </div>
+    <div class="panel">
+      <h3>✏️ Saisir une note</h3>
+      <label>Élève</label><select id="ecStudent">${eleves.map(e=>`<option value="${e.id}">${e.name}</option>`).join('')}</select>
+      <label>Note sur 20</label><input id="ecNote" type="number" min="0" max="20" value="12">
+      <button class="btn small" onclick="addNote()">Enregistrer</button>
+    </div>`;
+}
+function addEleve(){
+  const name=document.getElementById('ecName').value.trim();
+  if(!name){explain('Le nom est obligatoire. Un vrai logiciel refuse un élève sans nom.');return;}
+  eleves.push({id:Date.now(),name,notes:[]});
+  bilan.push(`Ajout de l'élève ${name}`);
+  explain(`<strong>${name} est enregistré.</strong> Plus de fiches papier perdues : tout est centralisé et accessible à l'équipe pédagogique.`);
+  renderEcole();
+}
+function addNote(){
+  const id=parseInt(document.getElementById('ecStudent').value);
+  const n=parseFloat(document.getElementById('ecNote').value);
+  const e=eleves.find(x=>x.id===id);
+  if(isNaN(n)||n<0||n>20){explain('Une note doit être entre 0 et 20. Le logiciel bloque les erreurs de saisie.');return;}
+  e.notes.push(n);
+  const m=moy(e);
+  bilan.push(`Note ${n}/20 pour ${e.name}`);
+  explain(`<strong>Note enregistrée : ${n}/20 pour ${e.name}.</strong> Moyenne recalculée : <strong>${m.toFixed(1)}/20</strong> — « ${appreciation(m)} ». Sans logiciel, le professeur refait ces calculs à la main pour chaque bulletin.`);
+  renderEcole();
+}
+
+/* ============================================================
+   COMMERCE
+   ============================================================ */
+let commerceProds=[], cart=[], ca=0, ventes=0, ventesLog=[];
+function initCommerce(){
+  commerceProds=[
+    {id:1,name:'Pain',price:500},
+    {id:2,name:'Lait',price:2000},
+    {id:3,name:'Café',price:3500},
+    {id:4,name:'Eau',price:1000}
+  ];
+  cart=[];ca=0;ventes=0;ventesLog=[];
+  renderCommerce();
+}
+function renderCommerce(){
+  const cartTotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  let top='—';
+  if(ventesLog.length){
+    const c={};
+    ventesLog.forEach(v=>v.items.forEach(i=>{c[i.name]=(c[i.name]||0)+i.qty;}));
+    top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0];
+  }
+  document.getElementById('simStats').innerHTML=`
+    <div class="stat"><div class="val">${(ca/1000).toFixed(1)}k</div><div class="lbl">CA (Ar)</div></div>
+    <div class="stat"><div class="val">${ventes}</div><div class="lbl">Ventes</div></div>
+    <div class="stat"><div class="val" style="font-size:.75rem">${top}</div><div class="lbl">Top produit</div></div>`;
+
+  const grid=commerceProds.map(p=>`<div class="prod-btn" onclick="addToCart(${p.id})"><div class="pn">${p.name}</div><div class="pp">${p.price.toLocaleString('fr-FR')} Ar</div></div>`).join('');
+  const cartHtml=cart.length?cart.map((i,idx)=>`<div class="cart-item"><span>${i.qty} × ${i.name}</span><span>${(i.price*i.qty).toLocaleString('fr-FR')} Ar <button class="btn small danger" onclick="removeCart(${idx})" style="margin-left:4px;padding:4px 8px">✕</button></span></div>`).join(''):'<div class="empty">Panier vide</div>';
+
+  document.getElementById('simBody').innerHTML=`
+    <div class="panel">
+      <h3>🛍️ Produits</h3>
+      <div class="prod-grid">${grid}</div>
+    </div>
+    <div class="panel">
+      <h3>🧺 Panier</h3>
+      ${cartHtml}
+      <div class="cart-total"><span>Total</span><span>${cartTotal.toLocaleString('fr-FR')} Ar</span></div>
+      <button class="btn" onclick="encaisser()" style="margin-top:10px">💳 Encaisser</button>
+    </div>
+    <div class="panel">
+      <h3>🧾 Ventes du jour</h3>
+      ${ventesLog.length?ventesLog.map((v,i)=>`<div class="cart-item"><span>Vente ${i+1}</span><strong>${v.total.toLocaleString('fr-FR')} Ar</strong></div>`).join(''):'<div class="empty">Aucune vente</div>'}
+    </div>`;
+}
+function addToCart(id){
+  const p=commerceProds.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;else cart.push({...p,qty:1});
+  explain(`<strong>${p.name} ajouté.</strong> Le total se recalcule automatiquement. Fini les erreurs de calcul mental à la caisse.`);
+  renderCommerce();
+}
+function removeCart(idx){cart.splice(idx,1);explain('Article retiré. Total mis à jour.');renderCommerce();}
+function encaisser(){
+  if(!cart.length){explain('Le panier est vide. Le logiciel empêche une vente sans produit.');return;}
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  ca+=total;ventes++;
+  ventesLog.push({items:[...cart],total});
+  bilan.push(`Vente : ${total.toLocaleString('fr-FR')} Ar`);
+  cart=[];
+  explain(`<strong>Vente encaissée : ${total.toLocaleString('fr-FR')} Ar.</strong> Enregistrée dans l'historique. Vous savez à tout moment combien vous avez vendu — sans compter à la main en fin de journée.`);
+  renderCommerce();
+}
+
+/* ============================================================
+   BILAN + WHATSAPP
+   ============================================================ */
+function showBilan(){
+  const labels={stock:'Gestion de Stock',hotel:'Gestion Hôtelière',ecole:'Gestion Scolaire',commerce:'Point de Vente'};
+  let list=bilan.length?bilan.map(b=>`<li>${b}</li>`).join(''):'<li>Aucune action effectuée.</li>';
+  document.getElementById('bilanContent').innerHTML=`
+    <div class="panel"><ul style="margin-left:18px;line-height:1.85;font-size:.85rem;color:#475569">${list}</ul></div>`;
+
+  const msgs={
+    stock:"Vous avez géré un stock en temps réel : ajout de produits, entrées, sorties, alertes automatiques. Un vrai logiciel fait cela pour tous vos produits, en permanence, sans que vous ayez à y penser.",
+    hotel:"Vous avez réservé et annulé des chambres en temps réel, avec blocage des doubles réservations. Un vrai logiciel fait cela pour toutes vos chambres, et toute l'équipe voit le planning à jour.",
+    ecole:"Vous avez ajouté des élèves, saisi des notes et vu les moyennes et appréciations se calculer seules. Un vrai logiciel fait cela pour toute l'école, et génère les bulletins en un clic.",
+    commerce:"Vous avez encaissé des ventes, suivi votre chiffre d'affaires et identifié votre produit le plus vendu. Un vrai logiciel fait cela à chaque vente, sans erreur de calcul."
+  };
+  document.getElementById('bilanMsg').textContent=msgs[domain];
+
+  const msg=encodeURIComponent(`Bonjour ! J'ai fait le test "${labels[domain]}" sur votre plateforme. Je suis intéressé(e) par un logiciel sur mesure pour mon activité. Pouvez-vous m'en dire plus ?`);
+  document.getElementById('waBtn').href=`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+
+  go('s-bilan');
+}
+</script>
+</body>
+</html>
